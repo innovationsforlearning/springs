@@ -17,6 +17,9 @@ IFL.Tween.GameState.prototype.preload = function () {
   this.game.load.image('moon', 'assets/Earth-from-the-moon_1024x768.jpg');
   
   this.game.load.audio('boom', 'assets/audio/boom.mp3');
+  this.game.load.audio('onset', 'assets/audio/onset/m.mp3');
+  this.game.load.audio('rime', 'assets/audio/rime/oon.mp3');
+  this.game.load.audio('word', 'assets/audio/word/Moon.mp3');
 
 }
 
@@ -43,6 +46,20 @@ IFL.Tween.GameState.prototype.create = function() {
     this.game.add.image(0, 0, 'moon');
 
     this.fx = game.add.audio('boom');
+    this.oAudio = game.add.audio('onset');
+    this.rAudio = game.add.audio('rime');
+
+    function playWPAudio(){
+      switch(this.state){
+        case this.WAIT_FOR_RIME:
+          this.oAudio.play();
+        break;
+        case this.WAIT_FOR_JOIN:
+          this.rAudio.play();
+        break;
+      }
+    }
+    this.fx.onStop.add(playWPAudio,this);
 
     var style = { font: "165px DidactGothic", fill: "#ff0044", align: "center" };
     this.onset = this.game.add.text(ox, y0, "m", style);
