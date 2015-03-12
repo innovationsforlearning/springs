@@ -15,6 +15,7 @@ IFL.Tween.GameState.prototype.preload = function () {
   "use strict";
   this.game.load.image('dust', 'assets/dust_puff_0018.png');
   this.game.load.image('moon', 'assets/Earth-from-the-moon_1024x768.jpg');
+  //this.game.load.image('btn_back', 'assets/btn_back.png');
   
   this.game.load.audio('boom', 'assets/audio/boom.mp3');
   this.game.load.audio('onset', 'assets/audio/onset/m.mp3');
@@ -25,14 +26,14 @@ IFL.Tween.GameState.prototype.preload = function () {
 
 IFL.Tween.GameState.prototype.create = function() {
   "use strict";
-  var oTween0, oTween1, rTween0, rTween1,
-    y0=-150,
+  var y0=-150,
     ox=this.game.world.centerX-150,
     rx=this.game.world.centerX+150;
 
     this.WAIT_FOR_ONSET = 0;
     this.WAIT_FOR_RIME = 1;
     this.WAIT_FOR_JOIN = 2;
+    this.WAIT_FOR_DONE = 3;
 
     this.state = this.WAIT_FOR_ONSET;
 
@@ -44,10 +45,14 @@ IFL.Tween.GameState.prototype.create = function() {
     // Sets background color to white.
     this.game.stage.backgroundColor = '#000000';
     this.game.add.image(0, 0, 'moon');
+    //this.game.add.button(0,0, 'btn_back', function(){IFL.games.flock.game.state.start('springs');}, this);
+    this.game.input.onUp.add(function(){IFL.games.flock.game.state.start('springs');}, this);
+
 
     this.fx = game.add.audio('boom');
     this.oAudio = game.add.audio('onset');
     this.rAudio = game.add.audio('rime');
+    this.wAudio = game.add.audio('word');
 
     function playWPAudio(){
       switch(this.state){
@@ -60,6 +65,8 @@ IFL.Tween.GameState.prototype.create = function() {
       }
     }
     this.fx.onStop.add(playWPAudio,this);
+    this.oAudio.onStop.add(function(){this.rTween0.start();}, this);
+    this.rAudio.onStop.add(function(){this.oTween1.start();this.rTween1.start()}, this);
 
     var style = { font: "165px DidactGothic", fill: "#ff0044", align: "center" };
     this.onset = this.game.add.text(ox, y0, "m", style);
@@ -76,12 +83,13 @@ IFL.Tween.GameState.prototype.create = function() {
     this.rEmitter.makeParticles('dust');
     this.rEmitter.gravity = 100;
 
-    oTween0 = this.game.add.tween(this.onset).to( { y: this.y1 }, 2000, Phaser.Easing.Bounce.Out, true);
-    rTween0 = this.game.add.tween(this.rime).to( { y: this.y1 }, 2000, Phaser.Easing.Bounce.Out);
-    oTween1 = this.game.add.tween(this.onset).to( {x: this.game.world.centerX}, 1000, Phaser.Easing.Bounce.Out);
-    rTween1 = this.game.add.tween(this.rime).to( {x: this.game.world.centerX}, 1000, Phaser.Easing.Bounce.Out);
-    oTween0.onComplete.add(function(){rTween0.start();}, this);
-    rTween0.onComplete.add(function(){oTween1.start();rTween1.start()},this);
+    this.oTween0 = this.game.add.tween(this.onset).to( { y: this.y1 }, 2000, Phaser.Easing.Bounce.Out, true);
+    this.rTween0 = this.game.add.tween(this.rime).to( { y: this.y1 }, 2000, Phaser.Easing.Bounce.Out);
+    this.oTween1 = this.game.add.tween(this.onset).to( {x: this.game.world.centerX}, 1000, Phaser.Easing.Bounce.Out);
+    this.rTween1 = this.game.add.tween(this.rime).to( {x: this.game.world.centerX}, 1000, Phaser.Easing.Bounce.Out);
+    //oTween0.onComplete.add(function(){rTween0.start();}, this);
+    //this.rTween0.onComplete.add(function(){this.oTween1.start();this.rTween1.start()},this);
+    this.rTween1.onComplete.add(function(){this.wAudio.play();},this);
 
 }
 

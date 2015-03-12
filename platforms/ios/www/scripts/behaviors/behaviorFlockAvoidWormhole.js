@@ -13,6 +13,7 @@ BehaviorFlockAvoidWormhole.prototype = {
 
 	  var avoidObjs = this.calcAvoidForce(objs);
 	  var avoidWall = MovementUtils.avoidWalls(this.boid.sprite.position,this.boid.game.world, 50,1);
+	  //MovementUtils.loopWalls(this.boid.sprite.position,this.boid.game.world);
 
     var separation = this.calcSeparate(objs);
 		var alignment = this.calcAlignment(objs);

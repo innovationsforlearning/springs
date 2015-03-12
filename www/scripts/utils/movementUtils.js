@@ -98,6 +98,7 @@ moveUtils = function(){
   function getRandomBetween(min, max) {
     return Math.random() * (max - min) + min;
   }
+
   return{
     facing:facing,
     seek:seek,

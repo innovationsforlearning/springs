@@ -1,4 +1,5 @@
 var IFL = IFL || {};
+var flockCenter = {};
 
 IFL.Flock = function(game){
   this.game = game;
@@ -33,18 +34,27 @@ IFL.Flock.GameState.prototype.create = function() {
   this.isDebugging = false;
 
   this.game.add.tileSprite(0, 0, 800, 600, 'grass');
+  this.game.add.tileSprite(800, 0, 800, 600, 'grass');
+  this.game.add.tileSprite(0, 600, 800, 600, 'grass');
+  this.game.add.tileSprite(800, 600, 800, 600, 'grass');
+  this.game.input.onUp.add(onUp);
   createAvoidanceTest();
 
 
   	function createAvoidanceTest()
   	{
-        self.game.add.button(0,0, 'btn_back', onUp, self);
-  			createFlockOne();
   			createAllWormholes();
+        createFlockOne();
+        game.world.setBounds(0, 0, 1600, 1200);
+        game.camera.follow(self.Flock[0].sprite);
+
   	}
 
     function onUp(){
-      IFL.games.flock.game.state.start('breakout');
+      //game.camera.reset();
+      game.world.setBounds(0, 0, 800, 600);
+
+      IFL.games.flock.game.state.start('tween');
     }
 
   	function doNothing()
@@ -79,12 +89,12 @@ IFL.Flock.GameState.prototype.create = function() {
     function createAllWormholes()
     {
       var d=128;
-      for(var i = 0; i< 20;i++){
+      for(var i = 0; i< 80;i++){
     		var wormhole = new Wormhole(game);
   			wormhole.initalize(i,'tree');
         wormhole.sprite.frame=randInt(4);
-        var x = (d+randInt(6*d));
-        var y = (d+randInt(4*d));
+        var x = (d+randInt(12*d));
+        var y = (d+randInt(8*d));
 
   			var pos = new Phaser.Point(x,y);
      		var vel = new Phaser.Point(0,0);
